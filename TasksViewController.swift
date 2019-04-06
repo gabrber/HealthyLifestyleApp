@@ -69,7 +69,7 @@ class TasksViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == UITableViewCell.EditingStyle.delete {
-            myTasks.remove(at: indexPath.row)
+            self.delete(indexPath: indexPath)
             tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
         }
     }
@@ -123,18 +123,44 @@ class TasksViewController: UITableViewController {
             NSEntityDescription.entity(forEntityName: "Task",
                                        in: managedContext)!
         
-        let person = NSManagedObject(entity: entity,
+        let newTask = NSManagedObject(entity: entity,
                                      insertInto: managedContext)
         
         // 3
-        person.setValue(name, forKeyPath: "name")
+        newTask.setValue(name, forKeyPath: "name")
         
         // 4
         do {
             try managedContext.save()
-            myTasks.append(person)
+            myTasks.append(newTask)
         } catch let error as NSError {
             print("Could not save. \(error), \(error.userInfo)")
+        }
+    }
+    
+    func delete(indexPath: IndexPath) {
+
+        guard let appDelegate =
+            UIApplication.shared.delegate as? AppDelegate else {
+                return
+        }
+
+        // 1
+        let managedContext =
+            appDelegate.persistentContainer.viewContext
+
+        // 2
+        managedContext.delete(myTasks[indexPath.row])
+
+        // 3
+        (UIApplication.shared.delegate as! AppDelegate).saveContext()
+
+        // 4
+        do {
+            myTasks = try managedContext.fetch(Task.fetchRequest())
+        } catch  let error as NSError {
+            print(error.userInfo)
+            print("Fetching Failed")
         }
     }
     

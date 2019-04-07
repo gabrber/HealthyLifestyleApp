@@ -17,9 +17,9 @@ class StepsViewController: UIViewController {
     // MARK: StepsViewProperties
     
     @IBOutlet weak var stepsNumber: UILabel!
-    @IBOutlet weak var stepsGoal: UILabel!
     @IBOutlet weak var stepsGoalTime: UILabel!
-
+    @IBOutlet weak var stepsGoalCount: UILabel!
+    
     var stepsGoalData: [NSManagedObject] = []
     
     override func viewDidLoad() {
@@ -29,14 +29,14 @@ class StepsViewController: UIViewController {
         // Do any additional setup after loading the view.
         
         getStepsFromHK()
-        getStepsGoal()
+        readStepsGoal()
         
     }
     
     
 //    override func viewWillAppear(_ animated: Bool) {
 //        super.viewWillAppear(animated)
-    private func getStepsGoal() {
+    private func readStepsGoal() {
         //1
         guard let appDelegate =
             UIApplication.shared.delegate as? AppDelegate else {
@@ -53,9 +53,10 @@ class StepsViewController: UIViewController {
         //3
         do {
             stepsGoalData = try managedContext.fetch(fetchRequest)
+            //print(stepsGoalData.count)
             if stepsGoalData.count > 0
             {
-                stepsGoal.text = String(stepsGoalData[0].value(forKey: "stepsGoal") as! Int)
+                stepsGoalCount.text = convertStepsForLabel(stepsToTake: stepsGoalData[0].value(forKey: "stepsGoal") as! Int)
                 stepsGoalTime.text = convertDateFormatter(readHourInput: stepsGoalData[0].value(forKey: "timeGoal") as! Date)
             }
         } catch let error as NSError {
@@ -105,11 +106,23 @@ class StepsViewController: UIViewController {
         return result
     }
     
-    //private func getStepsGoal() {
-    //
-    //}
+    func convertStepsForLabel(stepsToTake :Int) -> String {
+        let result = String(stepsToTake)
+        return result
+    }
 
     // MARK: StepsViewActions
+    
+    @IBAction func unwindToSteps(segue: UIStoryboardSegue) {
+        if segue.source is StepsGoalViewController {
+            if let senderSteps = segue.source as? StepsGoalViewController {
+                if senderSteps.ifUpdated {
+                    stepsGoalCount.text = String(senderSteps.sagueCount)
+                    stepsGoalTime.text = convertDateFormatter(readHourInput: senderSteps.sagueDate)
+                }
+            }
+        }
+    }
     
     @IBAction func authorizeHK(_ sender: UIButton) {
         authorizeHK()

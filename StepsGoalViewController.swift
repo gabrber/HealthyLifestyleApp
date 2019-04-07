@@ -14,7 +14,10 @@ class StepsGoalViewController: UIViewController {
     @IBOutlet weak var stepsGoalText: UITextField!
     @IBOutlet weak var stepsGoalTime: UIDatePicker!
     
-    var stepsNumber = 0
+    var sagueDate :Date!
+    var sagueCount :Int!
+    var ifUpdated = false
+    
 //    var doneSaving: (() -> ())?
     
     override func viewDidLoad() {
@@ -76,7 +79,10 @@ class StepsGoalViewController: UIViewController {
     
     func updateStepsGoal() {
         if let readUserInputSteps = Int(stepsGoalText.text!) {
+            sagueDate = stepsGoalTime.date
+            sagueCount = readUserInputSteps
             updateStepsGoalCoreData(stepsNumber: readUserInputSteps, stepsTime: stepsGoalTime.date)
+            ifUpdated = true
         }
         else {
             print("Wrong users input")
@@ -90,7 +96,8 @@ class StepsGoalViewController: UIViewController {
 //        if let doneSaving = doneSaving {
 //            doneSaving()
 //        }
-        dismiss(animated: true)
+        performSegue(withIdentifier: "unwindToSteps", sender: self)
+        //dismiss(animated: true)
         
     }
     

@@ -401,9 +401,11 @@
                     <connections>
                         <outlet property="stepsGoalText" destination="EoI-XO-Lw8" id="lXz-wt-zpb"/>
                         <outlet property="stepsGoalTime" destination="YwF-hJ-i1r" id="ZAZ-Do-jfB"/>
+                        <segue destination="pTG-0Y-wJ3" kind="unwind" identifier="unwindToSteps" unwindAction="unwindToStepsWithSegue:" id="1Uj-UV-JTs"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VTK-nU-Gmf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="pTG-0Y-wJ3" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="558" y="38"/>
         </scene>
@@ -520,11 +522,8 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zzk-Z1-Baq">
                                         <rect key="frame" x="0.0" y="100" width="375" height="50"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P3z-Ee-DZN">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cTz-yN-LeJ">
                                                 <rect key="frame" x="0.0" y="0.0" width="187.5" height="50"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="50" id="tUG-1z-orx"/>
-                                                </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -540,10 +539,12 @@
                                             </label>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstItem="P3z-Ee-DZN" firstAttribute="top" secondItem="Zzk-Z1-Baq" secondAttribute="top" id="FH3-sY-oYM"/>
-                                            <constraint firstItem="P3z-Ee-DZN" firstAttribute="leading" secondItem="Zzk-Z1-Baq" secondAttribute="leading" id="XaS-fr-Amg"/>
+                                            <constraint firstItem="cTz-yN-LeJ" firstAttribute="top" secondItem="Zzk-Z1-Baq" secondAttribute="top" id="0TB-6U-Cp5"/>
+                                            <constraint firstAttribute="bottom" secondItem="cTz-yN-LeJ" secondAttribute="bottom" id="cJs-ag-8xF"/>
+                                            <constraint firstItem="cTz-yN-LeJ" firstAttribute="width" secondItem="P0Y-Oo-IRQ" secondAttribute="width" id="clv-bh-NAY"/>
                                             <constraint firstItem="P0Y-Oo-IRQ" firstAttribute="top" secondItem="Zzk-Z1-Baq" secondAttribute="top" id="hfk-uw-EjJ"/>
                                             <constraint firstAttribute="trailing" secondItem="P0Y-Oo-IRQ" secondAttribute="trailing" id="peA-Aa-Um2"/>
+                                            <constraint firstItem="cTz-yN-LeJ" firstAttribute="leading" secondItem="Zzk-Z1-Baq" secondAttribute="leading" id="vdb-e9-6fK"/>
                                         </constraints>
                                     </stackView>
                                 </subviews>
@@ -559,43 +560,46 @@
                                     <constraint firstAttribute="trailing" secondItem="Zzk-Z1-Baq" secondAttribute="trailing" id="w9y-LL-HXG"/>
                                 </constraints>
                             </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vbw-BH-Fok">
-                                <rect key="frame" x="143" y="416" width="89" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Ce-Uk-aqx">
+                                <rect key="frame" x="0.0" y="418" width="375" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="ZjZ-NH-ifj"/>
+                                </constraints>
                                 <state key="normal" title="Set new goal"/>
                                 <connections>
-                                    <action selector="setStepsGoal:" destination="ztP-B2-Df8" eventType="touchUpInside" id="Dzf-mT-3oU"/>
-                                    <segue destination="tgx-Zp-4Da" kind="presentation" identifier="toStepsGoalSegue" id="QMR-A8-r27"/>
+                                    <segue destination="tgx-Zp-4Da" kind="presentation" identifier="toStepsGoalSegue" id="WR6-6F-zW4"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="vbw-BH-Fok" firstAttribute="top" secondItem="2LH-tr-xcb" secondAttribute="bottom" constant="8" id="0DU-vN-QOb"/>
                             <constraint firstItem="nfI-Sd-KZl" firstAttribute="bottom" secondItem="igF-Es-pI0" secondAttribute="bottom" constant="20" id="3CV-5m-MaZ"/>
                             <constraint firstItem="2SP-cI-XEd" firstAttribute="leading" secondItem="nfI-Sd-KZl" secondAttribute="leading" id="5Zc-ML-9Nk"/>
                             <constraint firstItem="lSD-sa-xBR" firstAttribute="trailing" secondItem="nfI-Sd-KZl" secondAttribute="trailing" id="5rW-Hl-Jif"/>
                             <constraint firstItem="lSD-sa-xBR" firstAttribute="leading" secondItem="nfI-Sd-KZl" secondAttribute="leading" id="5xz-dY-LX5"/>
                             <constraint firstItem="2LH-tr-xcb" firstAttribute="top" secondItem="6uf-ln-o3g" secondAttribute="bottom" constant="20" id="6OY-AY-0h5"/>
                             <constraint firstItem="Kmo-fu-95B" firstAttribute="width" secondItem="MEO-2h-LCp" secondAttribute="width" multiplier="1:2" id="E64-8g-KWK"/>
+                            <constraint firstItem="nfI-Sd-KZl" firstAttribute="trailing" secondItem="7Ce-Uk-aqx" secondAttribute="trailing" id="HBe-Py-XCh"/>
                             <constraint firstItem="VLZ-hW-Nl9" firstAttribute="centerY" secondItem="lSD-sa-xBR" secondAttribute="centerY" id="J1P-SP-kUU"/>
                             <constraint firstItem="nfI-Sd-KZl" firstAttribute="trailing" secondItem="2SP-cI-XEd" secondAttribute="trailing" id="Lna-0t-9Uk"/>
                             <constraint firstItem="6uf-ln-o3g" firstAttribute="centerX" secondItem="nfI-Sd-KZl" secondAttribute="centerX" id="OGP-qE-yoR"/>
+                            <constraint firstItem="7Ce-Uk-aqx" firstAttribute="centerX" secondItem="nfI-Sd-KZl" secondAttribute="centerX" id="Pzd-YS-nTl"/>
                             <constraint firstItem="nfI-Sd-KZl" firstAttribute="trailing" secondItem="2LH-tr-xcb" secondAttribute="trailing" id="RYj-og-XcX"/>
                             <constraint firstItem="lSD-sa-xBR" firstAttribute="top" secondItem="nfI-Sd-KZl" secondAttribute="top" id="bIj-Kw-3As"/>
-                            <constraint firstItem="vbw-BH-Fok" firstAttribute="centerX" secondItem="nfI-Sd-KZl" secondAttribute="centerX" id="dfd-IZ-rT8"/>
+                            <constraint firstItem="7Ce-Uk-aqx" firstAttribute="leading" secondItem="nfI-Sd-KZl" secondAttribute="leading" id="dll-O7-dhx"/>
                             <constraint firstItem="P0Y-Oo-IRQ" firstAttribute="width" secondItem="MEO-2h-LCp" secondAttribute="width" multiplier="1:2" id="eZ4-gn-2fi"/>
                             <constraint firstItem="IgK-tf-Vla" firstAttribute="width" secondItem="MEO-2h-LCp" secondAttribute="width" multiplier="1:2" id="g9f-hK-evh"/>
                             <constraint firstItem="VLZ-hW-Nl9" firstAttribute="centerX" secondItem="nfI-Sd-KZl" secondAttribute="centerX" id="h10-mX-fHk"/>
                             <constraint firstItem="6uf-ln-o3g" firstAttribute="top" secondItem="2SP-cI-XEd" secondAttribute="bottom" constant="8" id="iFy-B2-5Jh"/>
+                            <constraint firstItem="7Ce-Uk-aqx" firstAttribute="top" secondItem="2LH-tr-xcb" secondAttribute="bottom" constant="10" id="jRr-VJ-MkS"/>
                             <constraint firstItem="2LH-tr-xcb" firstAttribute="leading" secondItem="nfI-Sd-KZl" secondAttribute="leading" id="kpi-4z-iNi"/>
                             <constraint firstItem="2SP-cI-XEd" firstAttribute="top" secondItem="lSD-sa-xBR" secondAttribute="bottom" constant="40" id="peZ-ml-UAB"/>
                             <constraint firstItem="igF-Es-pI0" firstAttribute="centerX" secondItem="nfI-Sd-KZl" secondAttribute="centerX" id="vmw-7T-QVq"/>
-                            <constraint firstItem="P3z-Ee-DZN" firstAttribute="width" secondItem="MEO-2h-LCp" secondAttribute="width" multiplier="1:2" id="yBg-Sg-0kc"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="nfI-Sd-KZl"/>
                     </view>
                     <connections>
-                        <outlet property="stepsGoal" destination="P3z-Ee-DZN" id="ZVY-GR-S5F"/>
+                        <outlet property="stepsGoalCount" destination="cTz-yN-LeJ" id="ZRK-Gb-Ch7"/>
                         <outlet property="stepsGoalTime" destination="P0Y-Oo-IRQ" id="Fuq-uV-7qw"/>
                         <outlet property="stepsNumber" destination="UQM-ko-Pry" id="yl3-W9-aPi"/>
                     </connections>

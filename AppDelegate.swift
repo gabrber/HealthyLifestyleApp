@@ -8,15 +8,29 @@
 
 import UIKit
 import CoreData
+import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        let center = UNUserNotificationCenter.current()
+        let options: UNAuthorizationOptions  = [.sound, .alert]
+        center.requestAuthorization(options: options) { (granted, error) in
+            if error != nil {
+                print(error)
+            }
+            if !granted {
+                print("Notifications are not enabled")
+            }
+            
+        }
+        center.delegate = self
+        
         return true
     }
 
@@ -85,6 +99,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
+    }
+    
+    // MARK: Local Notifications
+    
+    //run notifictaion also if not in background
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
     }
 
 }

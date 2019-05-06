@@ -9,6 +9,7 @@
 import UIKit
 import HealthKit
 import CoreData
+import UserNotifications
 
 let healthKitStore:HKHealthStore = HKHealthStore()
 
@@ -27,7 +28,6 @@ class StepsViewController: UIViewController {
         
 
         // Do any additional setup after loading the view.
-        
         getStepsFromHK()
         readStepsGoal()
         
@@ -110,6 +110,32 @@ class StepsViewController: UIViewController {
         let result = String(stepsToTake)
         return result
     }
+    
+    func setStepsNotification(timeGoal :Date) {
+        let center = UNUserNotificationCenter.current()
+        var content = UNMutableNotificationContent()
+        content.title = "Let's exercise!"
+        content.body = "Your steps goal was not reached today"
+        content.sound = UNNotificationSound.default
+        // all app notifications go to the same group
+        content.threadIdentifier = "local-notification hla"
+
+        let dateNotify = Calendar.current.dateComponents([.hour, .minute], from: timeGoal)
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateNotify, repeats: true)
+        let request = UNNotificationRequest(identifier: "content", content: content, trigger: trigger)
+        
+        let stepsTaken = stepsNumber.text!
+        let stepsToTake = stepsGoalCount.text!
+        
+        if(Int(stepsTaken)! < Int(stepsToTake)!) {
+            center.add(request) { (error) in
+                if error != nil {
+                    print(error)
+                }
+            }
+        }
+    }
 
     // MARK: StepsViewActions
     
@@ -119,6 +145,7 @@ class StepsViewController: UIViewController {
                 if senderSteps.ifUpdated {
                     stepsGoalCount.text = String(senderSteps.sagueCount)
                     stepsGoalTime.text = convertDateFormatter(readHourInput: senderSteps.sagueDate)
+                    self.setStepsNotification(timeGoal: senderSteps.sagueDate)
                 }
             }
         }

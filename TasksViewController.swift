@@ -17,7 +17,7 @@ class TasksViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "TO DO"
+        //title = "To do"
         tableView.register(UITableViewCell.self,
                            forCellReuseIdentifier: "Cell")
     }
@@ -76,6 +76,7 @@ class TasksViewController: UITableViewController {
     
     // MARK: TasksActions
     
+
     @IBAction func addTask(_ sender: UIBarButtonItem) {
         
         let alert = UIAlertController(title: "New Task",

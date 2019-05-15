@@ -25,8 +25,8 @@ class StepsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationItem.title = ""
         
-
         // Do any additional setup after loading the view.
         getStepsFromHK()
         readStepsGoal()

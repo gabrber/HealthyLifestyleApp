@@ -110,6 +110,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.alert, .badge, .sound])
     }
+    
+//    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+//        // Determine the user action
+//        switch response.actionIdentifier {
+//        case UNNotificationDismissActionIdentifier:
+//            print("Dismiss Action")
+//        case UNNotificationDefaultActionIdentifier:
+//            print("Default")
+//            self.runAfterDelay(3.0) {  // 3 second delay to give observer time to load. 3 seconds is arbitrary. runAfterDelay function is below
+//                NotificationCenter.default.post(name: Notification.Name(rawValue: NSLocalizedString("ticker_notification_name", comment: "")), object: response)  // .body
+//            }
+//        case "Snooze":
+//            print("Snooze")
+//        case "Delete":
+//            print("Delete")
+//        default:
+//            print("Unknown action")
+//        }
+//        completionHandler()
+//    }
+//
+//    func runAfterDelay(_ delay: Double, closure:@escaping ()->()) {
+//        let when = DispatchTime.now() + delay
+//        DispatchQueue.main.asyncAfter(deadline: when, execute: closure)
+//    }
 
 }
 

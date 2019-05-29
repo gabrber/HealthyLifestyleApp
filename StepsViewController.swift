@@ -10,14 +10,15 @@ import UIKit
 import HealthKit
 import CoreData
 import UserNotifications
+import MBCircularProgressBar
 
 let healthKitStore:HKHealthStore = HKHealthStore()
 
 class StepsViewController: UIViewController {
   
     // MARK: StepsViewProperties
+    @IBOutlet weak var progressBar: MBCircularProgressBarView!
     
-    @IBOutlet weak var stepsNumber: UILabel!
     @IBOutlet weak var stepsGoalTime: UILabel!
     @IBOutlet weak var stepsGoalCount: UILabel!
     
@@ -28,14 +29,19 @@ class StepsViewController: UIViewController {
         self.navigationItem.title = ""
         
         // Do any additional setup after loading the view.
+        authorizeHK()
         getStepsFromHK()
         readStepsGoal()
         
     }
     
+//    override func viewDidAppear(_ animated: Bool) {
+//        UIView.animate(withDuration: 1.0) {
+//            self.progressBar.maxValue = CGFloat(self.maxStepsValue)
+//            print(self.maxStepsValue)
+//        }
+//    }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
     private func readStepsGoal() {
         //1
         guard let appDelegate =
@@ -58,10 +64,14 @@ class StepsViewController: UIViewController {
             {
                 stepsGoalCount.text = convertStepsForLabel(stepsToTake: stepsGoalData[0].value(forKey: "stepsGoal") as! Int)
                 stepsGoalTime.text = convertDateFormatter(readHourInput: stepsGoalData[0].value(forKey: "timeGoal") as! Date)
+                self.progressBar.maxValue = CGFloat(stepsGoalData[0].value(forKey: "stepsGoal") as! Int)
+//                self.progressBar.unitString = "\n / " + String(stepsGoalData[0].value(forKey: "stepsGoal") as! Int)
+//                self.progressBar.showUnitString = true
             }
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
+        
     }
     
 //    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -94,7 +104,8 @@ class StepsViewController: UIViewController {
 
         HealthKitDataStore.getTodaysSteps { (stepsTaken) in
             DispatchQueue.main.async {
-                self.stepsNumber.text = String(stepsTaken)
+                //self.stepsNumber.text = String(stepsTaken)
+                self.progressBar.value = CGFloat(stepsTaken)
             }
         }
     }
@@ -115,24 +126,24 @@ class StepsViewController: UIViewController {
         let center = UNUserNotificationCenter.current()
         var content = UNMutableNotificationContent()
         content.title = "Let's exercise!"
-        content.body = "Your steps goal was not reached today"
+        
+        content.body = "Check if your steps goal was reached today"
         content.sound = UNNotificationSound.default
         // all app notifications go to the same group
         content.threadIdentifier = "local-notification hla"
+        content.categoryIdentifier = "CHECK_STEPS"
 
         let dateNotify = Calendar.current.dateComponents([.hour, .minute], from: timeGoal)
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateNotify, repeats: true)
         let request = UNNotificationRequest(identifier: "content", content: content, trigger: trigger)
         
-        let stepsTaken = stepsNumber.text!
+        //let stepsTaken = stepsNumber.text!
         let stepsToTake = stepsGoalCount.text!
         
-        if(Int(stepsTaken)! < Int(stepsToTake)!) {
-            center.add(request) { (error) in
-                if error != nil {
-                    print(error)
-                }
+        center.add(request) { (error) in
+            if error != nil {
+                print(error)
             }
         }
     }
@@ -145,18 +156,11 @@ class StepsViewController: UIViewController {
                 if senderSteps.ifUpdated {
                     stepsGoalCount.text = String(senderSteps.sagueCount)
                     stepsGoalTime.text = convertDateFormatter(readHourInput: senderSteps.sagueDate)
+                    self.progressBar.maxValue = CGFloat(senderSteps.sagueCount)
                     self.setStepsNotification(timeGoal: senderSteps.sagueDate)
                 }
             }
         }
-    }
-    
-    @IBAction func authorizeHK(_ sender: UIButton) {
-        authorizeHK()
-    }
-    
-    @IBAction func getSteps(_ sender: UIButton) {
-        getStepsFromHK()
     }
 
 }

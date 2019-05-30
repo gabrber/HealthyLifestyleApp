@@ -81,4 +81,24 @@ class FitnessTableViewController: UITableViewController {
         return cell
     }
     
+//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        let alertController = UIAlertController(title: myFitness[indexPath.row].name, message: myFitness[indexPath.row].description , preferredStyle: .alert)
+//        let defaultAction = UIAlertAction(title: "Back", style: .default, handler: nil)
+//        alertController.addAction(defaultAction)
+//        present(alertController, animated: true, completion: nil)
+//    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.performSegue(withIdentifier: "showFitnessDetails", sender: indexPath)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier == "showFitnessDetails") {
+            let destination = segue.destination as? FitnessDescriptionViewController
+            var tableIndex = self.tableView.indexPathForSelectedRow?.row
+            destination?.fitnessName = myFitness[tableIndex!].name
+            destination?.fitnessDescritpion = myFitness[tableIndex!].description
+        }
+    }
+    
 }

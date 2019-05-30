@@ -16,11 +16,13 @@ protocol FitnessExercise {
 struct Fitness {
     var name: String
     var image: String
+    var description: String
     
     var dictionary:[String:Any] {
         return [
             "name": name,
-            "image": image
+            "image": image,
+            "description": description
         ]
     }
 }
@@ -28,8 +30,9 @@ struct Fitness {
 extension Fitness : FitnessExercise {
     init?(dictionary:[String : Any]) {
         guard let name = dictionary["name"] as? String,
-            let image = dictionary["image"] as? String else {return nil}
+            let image = dictionary["image"] as? String,
+            let description = dictionary["description"] as? String else {return nil}
         
-        self.init(name: name, image: image)
+        self.init(name: name, image: image, description: description)
     }
 }

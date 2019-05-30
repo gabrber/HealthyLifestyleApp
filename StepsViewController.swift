@@ -27,20 +27,12 @@ class StepsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.title = ""
-        
         // Do any additional setup after loading the view.
         authorizeHK()
         getStepsFromHK()
         readStepsGoal()
         
     }
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        UIView.animate(withDuration: 1.0) {
-//            self.progressBar.maxValue = CGFloat(self.maxStepsValue)
-//            print(self.maxStepsValue)
-//        }
-//    }
     
     private func readStepsGoal() {
         //1
@@ -73,15 +65,6 @@ class StepsViewController: UIViewController {
         }
         
     }
-    
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        if segue.identifier == "toStepsGoalSegue" {
-//            let popup = segue.destination as! StepsGoalViewController
-//            popup.doneSaving = {
-//                self.viewDidAppear(true)
-//            }
-//        }
-//    }
     
     // MARK: StepsViewFunctions
     

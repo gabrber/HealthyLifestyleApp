@@ -22,15 +22,20 @@ class StepsGoalViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let tap = UITapGestureRecognizer(target: self.view, action: Selector("endEditing:"))
+        tap.cancelsTouchesInView = false
+        self.view.addGestureRecognizer(tap)
         // Handle the text field's user input through delegate callbacks.
     }
-    
+       
     //MARK: UITextField Delegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         // Hide the keyboard
         textField.resignFirstResponder()
         return true
     }
+    
     
     func updateStepsGoalCoreData(stepsNumber: Int, stepsTime: Date){
         guard let appDelegate =

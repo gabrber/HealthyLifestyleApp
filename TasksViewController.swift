@@ -8,18 +8,48 @@
 
 import UIKit
 import CoreData
+import Firebase
+import FirebaseUI
 
 class TasksViewController: UITableViewController {
     
-    @IBOutlet var tasksTableView: UITableView!
+
     var myTasks: [NSManagedObject] = []
+    let storage = Storage.storage()
+    var tasksCategories: [String] = ["idea","shopping","books","travel","work","home","gym","relax","nature","food","other","people"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         //title = "To do"
         tableView.register(UITableViewCell.self,
                            forCellReuseIdentifier: "Cell")
+        tableView.layoutMargins = UIEdgeInsets.zero
+        tableView.separatorInset = UIEdgeInsets.zero
+        
+        test_dic()
+    }
+    
+    func test_dic(){
+        guard let appDelegate =
+            UIApplication.shared.delegate as? AppDelegate else {
+                return
+        }
+        
+        let managedContext =
+            appDelegate.persistentContainer.viewContext
+        
+        //2
+        let fetchRequest =
+            NSFetchRequest<NSManagedObject>(entityName: "Task")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedContext, sectionNameKeyPath: nil, cacheName: nil)
+        //3
+        do {
+            try controller.performFetch()
+            print(controller.sections!.count)
+        } catch let error as NSError {
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -44,10 +74,9 @@ class TasksViewController: UITableViewController {
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
+        
     }
 
-    
-    
     //return the number of rows in the table as the number of myTasks items
     override func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
@@ -58,12 +87,21 @@ class TasksViewController: UITableViewController {
     override func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath)
         -> UITableViewCell {
-            
+        
             let myTask = myTasks[indexPath.row]
-            let cell =
+            var cell =
                 tableView.dequeueReusableCell(withIdentifier: "Cell",
                                               for: indexPath)
-            cell.textLabel?.text = myTask.value(forKeyPath: "name") as? String
+            
+            cell = UITableViewCell(style: .subtitle, reuseIdentifier: "Cell")
+            cell.layoutMargins = UIEdgeInsets.zero
+            cell.textLabel!.numberOfLines = 0
+            cell.textLabel!.lineBreakMode = .byWordWrapping
+            cell.textLabel?.text = myTask.value(forKeyPath:"name") as? String
+            cell.detailTextLabel?.isEnabled = true
+            cell.detailTextLabel?.text = "done"
+            cell.imageView!.image = UIImage(named: "idea.png")
+            cell.imageView?.contentMode = .center
             return cell
     }
     
@@ -74,6 +112,22 @@ class TasksViewController: UITableViewController {
         }
     }
     
+    
+//    func groupTasksByDate() {
+//        Dictionary(grouping: myTasks) { (element) -> Date in
+//            return element.value(forKeyPath: "dateTask")
+//
+//        }
+//    }
+    
+//    override func numberOfSections(in tableView: UITableView) -> Int {
+//        return 5
+//    }
+//
+//    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        return "Section: \(section)"
+//    }
+//
     // MARK: TasksActions
     
 

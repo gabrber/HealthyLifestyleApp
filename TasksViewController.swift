@@ -17,6 +17,7 @@ class TasksViewController: UITableViewController {
     var myTasks: [NSManagedObject] = []
     let storage = Storage.storage()
     var tasksCategories: [String] = ["idea","shopping","books","travel","work","home","gym","relax","nature","food","other","people"]
+    let formatter = DateFormatter()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,35 +27,16 @@ class TasksViewController: UITableViewController {
         tableView.layoutMargins = UIEdgeInsets.zero
         tableView.separatorInset = UIEdgeInsets.zero
         
-        test_dic()
     }
-    
-    func test_dic(){
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
-        }
-        
-        let managedContext =
-            appDelegate.persistentContainer.viewContext
-        
-        //2
-        let fetchRequest =
-            NSFetchRequest<NSManagedObject>(entityName: "Task")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedContext, sectionNameKeyPath: nil, cacheName: nil)
-        //3
-        do {
-            try controller.performFetch()
-            print(controller.sections!.count)
-        } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
-        }
-    }
+      
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        getData()
+
+    }
+    
+    func getData(){
         //1
         guard let appDelegate =
             UIApplication.shared.delegate as? AppDelegate else {
@@ -67,6 +49,7 @@ class TasksViewController: UITableViewController {
         //2
         let fetchRequest =
             NSFetchRequest<NSManagedObject>(entityName: "Task")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "dateTask", ascending: true)]
         
         //3
         do {
@@ -74,7 +57,6 @@ class TasksViewController: UITableViewController {
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
-        
     }
 
     //return the number of rows in the table as the number of myTasks items
@@ -87,7 +69,8 @@ class TasksViewController: UITableViewController {
     override func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath)
         -> UITableViewCell {
-        
+            
+            formatter.dateFormat = "yyyy/MM/dd HH:mm"
             let myTask = myTasks[indexPath.row]
             var cell =
                 tableView.dequeueReusableCell(withIdentifier: "Cell",
@@ -99,7 +82,7 @@ class TasksViewController: UITableViewController {
             cell.textLabel!.lineBreakMode = .byWordWrapping
             cell.textLabel?.text = myTask.value(forKeyPath:"name") as? String
             cell.detailTextLabel?.isEnabled = true
-            cell.detailTextLabel?.text = "done"
+            cell.detailTextLabel?.text = formatter.string(from: (myTask.value(forKeyPath:"dateTask") as! Date))
             cell.imageView!.image = UIImage(named: "idea.png")
             cell.imageView?.contentMode = .center
             return cell
@@ -112,57 +95,7 @@ class TasksViewController: UITableViewController {
         }
     }
     
-    
-//    func groupTasksByDate() {
-//        Dictionary(grouping: myTasks) { (element) -> Date in
-//            return element.value(forKeyPath: "dateTask")
-//
-//        }
-//    }
-    
-//    override func numberOfSections(in tableView: UITableView) -> Int {
-//        return 5
-//    }
-//
-//    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        return "Section: \(section)"
-//    }
-//
-    // MARK: TasksActions
-    
-
-    @IBAction func addTask(_ sender: UIBarButtonItem) {
-        
-        let alert = UIAlertController(title: "New Task",
-                                      message: "Add a new task",
-                                      preferredStyle: .alert)
-        
-        let saveAction = UIAlertAction(title: "Save",
-                                       style: .default) {
-                                        [unowned self] action in
-                                        
-                                        guard let textField = alert.textFields?.first,
-                                            let nameToSave = textField.text else {
-                                                return
-                                        }
-                                        
-                                        self.save(name: nameToSave)
-                                        self.tableView.reloadData()
-        }
-        
-        let cancelAction = UIAlertAction(title: "Cancel",
-                                         style: .cancel)
-        
-        alert.addTextField()
-        
-        alert.addAction(saveAction)
-        alert.addAction(cancelAction)
-        
-        present(alert, animated: true)
-        
-    }
-    
-    func save(name: String) {
+    func save(name: String, date: Date, category: String) {
         
         guard let appDelegate =
             UIApplication.shared.delegate as? AppDelegate else {
@@ -183,11 +116,14 @@ class TasksViewController: UITableViewController {
         
         // 3
         newTask.setValue(name, forKeyPath: "name")
+        newTask.setValue(category, forKeyPath: "typeTask")
+        newTask.setValue(date, forKeyPath: "dateTask")
         
         // 4
         do {
             try managedContext.save()
-            myTasks.append(newTask)
+            //myTasks.append(newTask)
+            getData()
         } catch let error as NSError {
             print("Could not save. \(error), \(error.userInfo)")
         }
@@ -216,6 +152,28 @@ class TasksViewController: UITableViewController {
         } catch  let error as NSError {
             print(error.userInfo)
             print("Fetching Failed")
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier == "addNewTaskSegue") {
+            let destination = segue.destination as? AddTaskViewController
+            var tableIndex = self.tableView.indexPathForSelectedRow?.row
+            destination?.tasksCategories = tasksCategories
+        }
+    }
+    
+    @IBAction func unwindToTaskView(segue: UIStoryboardSegue) {
+        if segue.source is AddTaskViewController {
+            if let newTaskToAdd = segue.source as? AddTaskViewController {
+                if newTaskToAdd.ifUpdated {
+                    var name = newTaskToAdd.taskName
+                    var date = newTaskToAdd.taskDate!
+                    var categ =  newTaskToAdd.taskCategory
+                    save(name: name, date: date, category: categ)
+                    tableView.reloadData()
+                }
+            }
         }
     }
     

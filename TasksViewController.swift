@@ -16,7 +16,7 @@ class TasksViewController: UITableViewController {
 
     var myTasks: [NSManagedObject] = []
     let storage = Storage.storage()
-    var tasksCategories: [String] = ["idea","shopping","books","travel","work","home","gym","relax","nature","food","other","people"]
+    var tasksCategories: [String] = ["idea","shopping","learning","travel","work","home","gym","relax","nature","food","other","people"]
     let formatter = DateFormatter()
     
     override func viewDidLoad() {
@@ -83,7 +83,7 @@ class TasksViewController: UITableViewController {
             cell.textLabel?.text = myTask.value(forKeyPath:"name") as? String
             cell.detailTextLabel?.isEnabled = true
             cell.detailTextLabel?.text = formatter.string(from: (myTask.value(forKeyPath:"dateTask") as! Date))
-            cell.imageView!.image = UIImage(named: "idea.png")
+            cell.imageView!.image = UIImage(named: ((myTask.value(forKeyPath:"typeTask") as? String)! + ".png"))
             cell.imageView?.contentMode = .center
             return cell
     }

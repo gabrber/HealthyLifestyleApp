@@ -10,6 +10,7 @@ import UIKit
 import CoreData
 import Firebase
 import FirebaseUI
+import UserNotifications
 
 class TasksViewController: UITableViewController {
     
@@ -84,7 +85,12 @@ class TasksViewController: UITableViewController {
             cell.detailTextLabel?.isEnabled = true
             cell.detailTextLabel?.text = formatter.string(from: (myTask.value(forKeyPath:"dateTask") as! Date))
             cell.imageView!.image = UIImage(named: ((myTask.value(forKeyPath:"typeTask") as? String)! + ".png"))
-            cell.imageView?.contentMode = .center
+            //cell.imageView?.contentMode = .center
+            
+            if (myTask.value(forKeyPath:"isDone") as! Bool) == true {
+                cell.accessoryType = .checkmark
+            }
+            
             return cell
     }
     
@@ -92,6 +98,39 @@ class TasksViewController: UITableViewController {
         if editingStyle == UITableViewCell.EditingStyle.delete {
             self.delete(indexPath: indexPath)
             tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let myTask = myTasks[indexPath.row]
+        self.updateIsDone(indexTask: myTask, isDone: !(myTask.value(forKeyPath:"isDone") as! Bool))
+        if !(myTask.value(forKeyPath:"isDone") as! Bool) {
+            self.removeTasksNotifications(name: (myTask.value(forKeyPath:"name") as! String), taskDate: (myTask.value(forKeyPath:"dateTask") as! Date))
+            print("Notification was deleted")
+        } else {
+            setNotifications(name: (myTask.value(forKeyPath:"name") as! String), taskDate: (myTask.value(forKeyPath:"dateTask") as! Date))
+            print("Notification was set")
+        }
+        tableView.reloadData()
+        
+    }
+    
+    func updateIsDone(indexTask: NSManagedObject, isDone: Bool) {
+        guard let appDelegate =
+            UIApplication.shared.delegate as? AppDelegate else {
+                return
+        }
+        
+        let managedContext =
+            appDelegate.persistentContainer.viewContext
+        
+        managedContext.object(with: indexTask.objectID).setValue(isDone, forKey: "isDone")
+        
+        // 4
+        do {
+            try managedContext.save()
+        } catch let error as NSError {
+            print("Could not save. \(error), \(error.userInfo)")
         }
     }
     
@@ -118,6 +157,7 @@ class TasksViewController: UITableViewController {
         newTask.setValue(name, forKeyPath: "name")
         newTask.setValue(category, forKeyPath: "typeTask")
         newTask.setValue(date, forKeyPath: "dateTask")
+        newTask.setValue(false, forKey: "isDone")
         
         // 4
         do {
@@ -128,14 +168,15 @@ class TasksViewController: UITableViewController {
             print("Could not save. \(error), \(error.userInfo)")
         }
     }
-    
+
     func delete(indexPath: IndexPath) {
 
         guard let appDelegate =
             UIApplication.shared.delegate as? AppDelegate else {
                 return
         }
-
+        
+        self.removeTasksNotifications(name: (myTasks[indexPath.row].value(forKeyPath:"name") as! String), taskDate: (myTasks[indexPath.row].value(forKeyPath:"dateTask") as! Date))
         // 1
         let managedContext =
             appDelegate.persistentContainer.viewContext
@@ -155,6 +196,54 @@ class TasksViewController: UITableViewController {
         }
     }
     
+    func convertDateFormatter(readHourInput :Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy/MM/dd HH:mm" // change format as per needs
+        let result = formatter.string(from: readHourInput)
+        return result
+    }
+    
+    func setNotifications(name: String, taskDate: Date) {
+        let center = UNUserNotificationCenter.current()
+        
+        var content = UNMutableNotificationContent()
+        content.title = "Task reminder"
+        content.body = name
+        content.sound = UNNotificationSound.default
+        // all app notifications go to the same group
+        content.threadIdentifier = "local-notification hla"
+        content.categoryIdentifier = "MEAL_TIME"
+        
+        var identifierTask = "TASK_NOTIFICATION" + name + convertDateFormatter(readHourInput: taskDate)
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy/MM/dd HH:mm"
+        let taskDateNotify = formatter.date(from: convertDateFormatter(readHourInput: taskDate)) as! Date
+        let dateNotify = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: taskDateNotify)
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateNotify, repeats: false)
+        let request = UNNotificationRequest(identifier: identifierTask, content: content, trigger: trigger)
+            
+        center.add(request) { (error) in
+            if error != nil {
+                print(error)
+            }
+        }
+    }
+    
+    func removeTasksNotifications(name: String, taskDate: Date) {
+        let ident = "TASK_NOTIFICATION" + name + convertDateFormatter(readHourInput: taskDate)
+        do {
+            try  UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [ident])
+            print("Notification removed")
+        } catch  let error as NSError {
+            print(error.userInfo)
+            print("Failed to remove notification")
+        }
+        
+    }
+    
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "addNewTaskSegue") {
             let destination = segue.destination as? AddTaskViewController
@@ -172,6 +261,7 @@ class TasksViewController: UITableViewController {
                     var categ =  newTaskToAdd.taskCategory
                     save(name: name, date: date, category: categ)
                     tableView.reloadData()
+                    setNotifications(name: name, taskDate: date)
                 }
             }
         }

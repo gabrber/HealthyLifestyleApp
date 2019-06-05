@@ -142,8 +142,9 @@ class MealsViewController: UIViewController {
             content.categoryIdentifier = "MEAL_TIME"
             
             var identifierHour = "MEAL_TIME" + hour
+            
             let formatter = DateFormatter()
-            formatter.dateFormat = "HH:mm"
+            formatter.dateFormat = "yyyy/HH:mm"
             let currentDateTimeFrom = formatter.date(from: hour) as! Date
             let dateNotify = Calendar.current.dateComponents([.hour, .minute], from: currentDateTimeFrom)
             

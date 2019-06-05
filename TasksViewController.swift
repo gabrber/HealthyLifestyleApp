@@ -104,12 +104,12 @@ class TasksViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let myTask = myTasks[indexPath.row]
         self.updateIsDone(indexTask: myTask, isDone: !(myTask.value(forKeyPath:"isDone") as! Bool))
-        if !(myTask.value(forKeyPath:"isDone") as! Bool) {
+        if (myTask.value(forKeyPath:"isDone") as! Bool) {
             self.removeTasksNotifications(name: (myTask.value(forKeyPath:"name") as! String), taskDate: (myTask.value(forKeyPath:"dateTask") as! Date))
-            print("Notification was deleted")
+            print("Notification was deleted for \((myTask.value(forKeyPath:"name") as! String))")
         } else {
             setNotifications(name: (myTask.value(forKeyPath:"name") as! String), taskDate: (myTask.value(forKeyPath:"dateTask") as! Date))
-            print("Notification was set")
+            print("Notification was set for \((myTask.value(forKeyPath:"name") as! String))")
         }
         tableView.reloadData()
         

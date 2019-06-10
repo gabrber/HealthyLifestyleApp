@@ -52,7 +52,7 @@ class AddTaskViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
         super.viewDidLoad()
         
         taskCategory = tasksCategories[0]
-        
+        newTaskName.placeholder = "new task"
         let tap = UITapGestureRecognizer(target: self.view, action: Selector("endEditing:"))
         tap.cancelsTouchesInView = false
         self.view.addGestureRecognizer(tap)

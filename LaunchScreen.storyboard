@@ -18,19 +18,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Healthy Lifestyle App" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="INA-XJ-UrZ">
-                                <rect key="frame" x="0.0" y="274" width="480" height="119"/>
-                                <fontDescription key="fontDescription" name="Zapfino" family="Zapfino" pointSize="35"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo.png" translatesAutoresizingMaskIntoConstraints="NO" id="z6g-hr-fkO">
+                                <rect key="frame" x="0.0" y="20" width="375" height="375"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="z6g-hr-fkO" secondAttribute="height" id="xcy-3k-adw"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Healthy Lifestyle" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="INA-XJ-UrZ">
+                                <rect key="frame" x="0.0" y="395" width="375" height="272"/>
+                                <fontDescription key="fontDescription" name="Zapfino" family="Zapfino" pointSize="25"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" red="0.41582787118088305" green="0.64217638329010218" blue="0.72041560913705582" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.61176470588235299" green="0.6470588235294118" blue="0.75294117647058822" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="INA-XJ-UrZ" firstAttribute="centerX" secondItem="bK9-mH-Flq" secondAttribute="centerX" id="2uF-Q7-rBu"/>
-                            <constraint firstItem="INA-XJ-UrZ" firstAttribute="width" secondItem="pa5-mE-hZc" secondAttribute="width" id="XEc-0p-JbW"/>
-                            <constraint firstItem="INA-XJ-UrZ" firstAttribute="centerY" secondItem="bK9-mH-Flq" secondAttribute="centerY" id="XtT-dg-ZpE"/>
-                            <constraint firstItem="INA-XJ-UrZ" firstAttribute="height" secondItem="pa5-mE-hZc" secondAttribute="height" id="hU2-UK-e6f"/>
+                            <constraint firstItem="INA-XJ-UrZ" firstAttribute="width" secondItem="pa5-mE-hZc" secondAttribute="width" id="Ef5-kP-fNT"/>
+                            <constraint firstItem="INA-XJ-UrZ" firstAttribute="top" secondItem="z6g-hr-fkO" secondAttribute="bottom" id="G6I-Bd-Yfq"/>
+                            <constraint firstItem="INA-XJ-UrZ" firstAttribute="centerX" secondItem="bK9-mH-Flq" secondAttribute="centerX" id="GzL-BD-lja"/>
+                            <constraint firstItem="bK9-mH-Flq" firstAttribute="bottom" secondItem="INA-XJ-UrZ" secondAttribute="bottom" id="JcC-Vr-jkG"/>
+                            <constraint firstItem="z6g-hr-fkO" firstAttribute="top" secondItem="bK9-mH-Flq" secondAttribute="top" id="dqP-za-Svq"/>
+                            <constraint firstItem="z6g-hr-fkO" firstAttribute="leading" secondItem="bK9-mH-Flq" secondAttribute="leading" id="uZg-X1-3od"/>
+                            <constraint firstAttribute="trailing" secondItem="z6g-hr-fkO" secondAttribute="trailing" id="w7I-yW-BA6"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="bK9-mH-Flq"/>
                     </view>
@@ -40,4 +49,7 @@
             <point key="canvasLocation" x="412" y="87.706146926536732"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="logo.png" width="700" height="700"/>
+    </resources>
 </document>

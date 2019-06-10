@@ -14,7 +14,7 @@ import UserNotifications
 
 class TasksViewController: UITableViewController {
     
-
+    
     var myTasks: [NSManagedObject] = []
     let storage = Storage.storage()
     var tasksCategories: [String] = ["idea","shopping","learning","travel","work","home","gym","relax","nature","food","other","people"]
@@ -29,12 +29,11 @@ class TasksViewController: UITableViewController {
         tableView.separatorInset = UIEdgeInsets.zero
         
     }
-      
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         getData()
-
+        
     }
     
     func getData(){
@@ -58,17 +57,18 @@ class TasksViewController: UITableViewController {
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
+        
     }
-
+    
     //return the number of rows in the table as the number of myTasks items
     override func tableView(_ tableView: UITableView,
-                   numberOfRowsInSection section: Int) -> Int {
+                            numberOfRowsInSection section: Int) -> Int {
         return myTasks.count
     }
     
     //dequeue table view cells and populate them with the corresponding string from myTasks
     override func tableView(_ tableView: UITableView,
-                   cellForRowAt indexPath: IndexPath)
+                            cellForRowAt indexPath: IndexPath)
         -> UITableViewCell {
             
             formatter.dateFormat = "yyyy/MM/dd HH:mm"
@@ -84,11 +84,23 @@ class TasksViewController: UITableViewController {
             cell.textLabel?.text = myTask.value(forKeyPath:"name") as? String
             cell.detailTextLabel?.isEnabled = true
             cell.detailTextLabel?.text = formatter.string(from: (myTask.value(forKeyPath:"dateTask") as! Date))
-            cell.imageView!.image = UIImage(named: ((myTask.value(forKeyPath:"typeTask") as? String)! + ".png"))
-            //cell.imageView?.contentMode = .center
+            cell.imageView!.image = UIImage(named: ("raw"))
+            //cell.imageView!.image = imageWithImage(image: UIImage(named: ((myTask.value(forKeyPath:"typeTask") as? String)!))!, scaledToSize: CGSize(width: 30, height: 30))
+            cell.imageView?.contentMode = .center
+            cell.imageView?.isHidden = true
+            //let cellImg : UIImageView = UIImageView(frame: CGRect(x: cell.frame.height/2,y: cell.frame.height/2 ,width: 30,height: 30))
+            let cellImg : UIImageView = UIImageView(frame: CGRect(x: 13,y: 13 ,width: 30,height: 30))
+            cellImg.image = UIImage(named: ((myTask.value(forKeyPath:"typeTask") as? String)!))
+            cell.addSubview(cellImg)
+            
             
             if (myTask.value(forKeyPath:"isDone") as! Bool) == true {
                 cell.accessoryType = .checkmark
+            }
+            
+            if ((!(myTask.value(forKeyPath:"isDone") as! Bool) == true) && (Calendar.current.dateComponents([.second], from: Date(), to: (myTask.value(forKeyPath:"dateTask") as! Date)).second! < 0)) {
+                cell.textLabel?.textColor = .red
+                cell.detailTextLabel?.textColor = .red
             }
             
             return cell
@@ -151,7 +163,7 @@ class TasksViewController: UITableViewController {
                                        in: managedContext)!
         
         let newTask = NSManagedObject(entity: entity,
-                                     insertInto: managedContext)
+                                      insertInto: managedContext)
         
         // 3
         newTask.setValue(name, forKeyPath: "name")
@@ -168,9 +180,9 @@ class TasksViewController: UITableViewController {
             print("Could not save. \(error), \(error.userInfo)")
         }
     }
-
+    
     func delete(indexPath: IndexPath) {
-
+        
         guard let appDelegate =
             UIApplication.shared.delegate as? AppDelegate else {
                 return
@@ -180,16 +192,17 @@ class TasksViewController: UITableViewController {
         // 1
         let managedContext =
             appDelegate.persistentContainer.viewContext
-
+        
         // 2
         managedContext.delete(myTasks[indexPath.row])
-
+        
         // 3
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
-
+        
         // 4
         do {
             myTasks = try managedContext.fetch(Task.fetchRequest())
+            self.getData()
         } catch  let error as NSError {
             print(error.userInfo)
             print("Fetching Failed")
@@ -223,7 +236,7 @@ class TasksViewController: UITableViewController {
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateNotify, repeats: false)
         let request = UNNotificationRequest(identifier: identifierTask, content: content, trigger: trigger)
-            
+        
         center.add(request) { (error) in
             if error != nil {
                 print(error)
@@ -241,6 +254,15 @@ class TasksViewController: UITableViewController {
             print("Failed to remove notification")
         }
         
+    }
+    
+    func imageWithImage(image:UIImage,scaledToSize newSize:CGSize)->UIImage{
+        
+        UIGraphicsBeginImageContext( newSize )
+        image.draw(in: CGRect(x: 0,y: 0,width: newSize.width,height: newSize.height))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage!.withRenderingMode(.alwaysOriginal)
     }
     
     

@@ -102,13 +102,13 @@ class MealsViewController: UIViewController {
         
         delta = Calendar.current.dateComponents([.second], from: currentDateTimeFrom, to: currentDateTimeTo).second!
         var mealDelta = 0
-        if meals != 0 {
+        if meals > 0 {
             mealDelta = Int(delta/(meals+1))
-        }
-        
-        for i in 1...meals {
-            var mealToAppend = convertDateFormatter(readHourInput: Calendar.current.date(byAdding: .second, value: i*mealDelta, to: wakeUp)!)
-            mealsHourText.append(mealToAppend)
+            
+            for i in 1...meals {
+                var mealToAppend = convertDateFormatter(readHourInput: Calendar.current.date(byAdding: .second, value: i*mealDelta, to: wakeUp)!)
+                mealsHourText.append(mealToAppend)
+            }
         }
         
 //        if delta < 0 {
@@ -121,10 +121,13 @@ class MealsViewController: UIViewController {
     func modifyMealsText(meals: Int, wakeUp: Date, sleep :Date){
         var modifiedText = ""
         var mealsHourText :[String] = self.calculateMealsTime(meals: meals, wakeUp: wakeUp, sleep: sleep)
-        for i in 1...meals {
-            var mealTimeText = "\(i) meal     -     \(mealsHourText[i-1])\n\n"
-            modifiedText.append(mealTimeText)
+        if meals > 0 {
+            for i in 1...meals {
+                var mealTimeText = "\(i) meal     -     \(mealsHourText[i-1])\n\n"
+                modifiedText.append(mealTimeText)
+            }
         }
+        
         mealsText.text = modifiedText
         mealsText.centerVertically()
         
@@ -144,7 +147,7 @@ class MealsViewController: UIViewController {
             var identifierHour = "MEAL_TIME" + hour
             
             let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy/HH:mm"
+            formatter.dateFormat = "HH:mm"
             let currentDateTimeFrom = formatter.date(from: hour) as! Date
             let dateNotify = Calendar.current.dateComponents([.hour, .minute], from: currentDateTimeFrom)
             
@@ -164,7 +167,7 @@ class MealsViewController: UIViewController {
         UNUserNotificationCenter.current().getPendingNotificationRequests { (requests) in
             for request in requests {
                 if request.content.categoryIdentifier == "MEAL_TIME" {
-                    UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["identifier"])
+                    UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [request.identifier])
                 }
             }
         }
